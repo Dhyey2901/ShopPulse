@@ -29,5 +29,8 @@ venv/
 .env
 .env.*
 
+# Personal reference notes
+PROJECT_OVERVIEW.md
+
 # OS
 .DS_Store
