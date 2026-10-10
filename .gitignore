@@ -4,6 +4,7 @@
 service-account*.json
 gcp-key*.json
 credentials.json
+shoppulse-*.json
 
 # Astro / Airflow
 .astro/
