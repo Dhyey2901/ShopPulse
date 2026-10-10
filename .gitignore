@@ -7,6 +7,7 @@ credentials.json
 shoppulse-*.json
 
 # Astro / Airflow
+.bin/
 .astro/
 airflow_settings.yaml
 logs/
