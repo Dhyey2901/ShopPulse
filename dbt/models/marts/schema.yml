@@ -1,0 +1,97 @@
+version: 2
+
+models:
+  - name: fct_orders
+    description: One row per order, with item count and revenue rolled up from order_items.
+    columns:
+      - name: order_id
+        tests:
+          - unique
+          - not_null
+      - name: user_id
+        tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_customers')
+                field: user_id
+      - name: order_status
+        tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['Shipped', 'Complete', 'Processing', 'Cancelled', 'Returned']
+      - name: item_count
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: revenue
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_orders')
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "item_count = num_of_item"
+
+  - name: dim_customers
+    description: One row per customer with lifetime order stats (0/null for customers with no orders yet).
+    columns:
+      - name: user_id
+        tests:
+          - unique
+          - not_null
+      - name: email
+        tests:
+          - not_null
+      - name: lifetime_orders
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+      - name: lifetime_revenue
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+    tests:
+      - dbt_utils.equal_rowcount:
+          arguments:
+            compare_model: ref('stg_users')
+
+  - name: fct_daily_sales
+    description: Revenue and order count per day per product category.
+    columns:
+      - name: order_date
+        tests:
+          - not_null
+      - name: category
+        tests:
+          - not_null
+      - name: order_count
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 1
+                inclusive: true
+      - name: revenue
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: false
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          arguments:
+            combination_of_columns:
+              - order_date
+              - category
