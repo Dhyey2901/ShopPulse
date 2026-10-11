@@ -2,6 +2,8 @@
 
 End-to-end e-commerce data pipeline: Airflow ingests raw data, dbt models it in BigQuery into tested tables, a churn model trains on the result, and a dashboard reads the output.
 
+**[Live dashboard →](https://datastudio.google.com/reporting/0e35bd0f-5b87-4f01-a850-e90d6c4051e2)** — revenue trend, holiday vs. non-holiday sales, churn risk by segment, web-event funnel.
+
 ## Architecture
 
 ```text
@@ -79,9 +81,8 @@ All orchestrated daily by one Airflow DAG:
 
 ## Data quality
 
-61+ dbt tests across staging and marts: primary-key uniqueness, referential integrity (`relationships`) between every fact and its dimension, `accepted_values` on every closed enum (order/item status, gender, event_type), numeric range checks (no negative prices, ages 0–110, revenue ≥ 0), row-count parity between staging and marts (nothing silently dropped in a join), and grain-uniqueness checks on the daily sales table. Boundary cases (negative prices, orphaned foreign keys, inverted timestamps, out-of-range values) were manually probed against the live data before writing the corresponding tests, not just checkbox-added.
+66 dbt tests across 12 models (staging + marts): primary-key uniqueness, referential integrity (`relationships`) between every fact and its dimension, `accepted_values` on every closed enum (order/item status, gender, event_type), numeric range checks (no negative prices, ages 0–110, revenue ≥ 0), row-count parity between staging and marts (nothing silently dropped in a join), and grain-uniqueness checks on the daily sales table. Boundary cases (negative prices, orphaned foreign keys, inverted timestamps, out-of-range values) were manually probed against the live data before writing the corresponding tests, not just checkbox-added. `dbt build` passes 78/78.
 
-## What's next
+## What's next at scale
 
-- Looker Studio dashboard connected to the marts (revenue trend, holiday vs. non-holiday sales, churn risk by segment, web-event funnel)
-- Screenshots of the Airflow graph view and dbt lineage graph
+TheLook is small — this pipeline hasn't been tested past ~125K orders. At Kogan's scale (10M+ events/day) the changes would be: incremental dbt models instead of full-table rebuilds, date-partitioned and clustered BigQuery tables, and an event stream (Kafka/Pub/Sub) instead of a daily batch DAG. Swapping the `dbt_build` BashOperator for Astronomer Cosmos (one Airflow task per dbt model, instead of one opaque task for the whole run) and adding MLflow for experiment tracking would also be the next two infrastructure upgrades.
