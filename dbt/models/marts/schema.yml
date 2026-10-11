@@ -129,3 +129,17 @@ models:
       - dbt_utils.equal_rowcount:
           arguments:
             compare_model: ref('dim_customers')
+
+  - name: fct_event_funnel
+    description: Distinct users reaching each stage of the shopping funnel (home -> product -> cart -> purchase).
+    columns:
+      - name: event_type
+        tests:
+          - unique
+          - not_null
+      - name: distinct_users
+        tests:
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
