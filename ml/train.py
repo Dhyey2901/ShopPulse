@@ -40,7 +40,13 @@ def get_client():
 
 
 def load_features(client):
-    df = client.query(f"select * from `{FEATURES_TABLE}`").to_dataframe()
+    # create_bqstorage_client=False: the BQ Storage API read path needs
+    # bigquery.readsessions.create, which the service account doesn't
+    # have (it only has Data Editor + Job User). The plain REST fallback
+    # is plenty fast for a table this size.
+    df = client.query(f"select * from `{FEATURES_TABLE}`").to_dataframe(
+        create_bqstorage_client=False
+    )
     df["top_category"] = df["top_category"].fillna("none")
     return df
 
