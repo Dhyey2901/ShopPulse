@@ -10,3 +10,10 @@ sources:
       - name: users
       - name: products
       - name: events
+
+  - name: raw
+    database: "{{ env_var('DBT_GCP_PROJECT', 'shoppulse-511205') }}"
+    schema: raw
+    tables:
+      - name: holidays
+        description: Public holidays loaded daily from the Nager.Date API by the Airflow DAG (delete-then-insert by year).

@@ -11,12 +11,16 @@ shoppulse-*.json
 .astro/
 airflow_settings.yaml
 logs/
+# contains a machine-specific absolute path — see docker-compose.override.yml.example
+docker-compose.override.yml
 
 # dbt
 dbt/target/
 dbt/dbt_packages/
 dbt/logs/
 profiles.yml
+# dbt/profiles/profiles.yml is env_var-only (no secrets) — safe to commit
+!dbt/profiles/profiles.yml
 
 # Python
 __pycache__/

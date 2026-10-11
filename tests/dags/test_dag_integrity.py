@@ -1,8 +1,9 @@
 """Example Dags test. This test ensures that all Dags have tags, retries set to two, and no import errors. This is an example pytest and may not be fit the context of your Dags. Feel free to add and remove tests."""
 
-import os
 import logging
+import os
 from contextlib import contextmanager
+
 import pytest
 from airflow.models import DagBag
 
@@ -53,7 +54,7 @@ def get_dags():
 def test_file_imports(rel_path, rv):
     """Test for import errors on a file"""
     if rel_path and rv:
-        raise Exception(f"{rel_path} failed to import with message \n {rv}")
+        raise ImportError(f"{rel_path} failed to import with message \n {rv}")
 
 
 APPROVED_TAGS = {}

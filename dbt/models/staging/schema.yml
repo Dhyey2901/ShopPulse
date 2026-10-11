@@ -124,3 +124,14 @@ models:
                 field: user_id
               config:
                 where: "user_id is not null"
+
+  - name: stg_holidays
+    columns:
+      - name: holiday_date
+        tests:
+          - not_null
+      - name: country_code
+        tests:
+          - accepted_values:
+              arguments:
+                values: ['AU']

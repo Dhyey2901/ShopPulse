@@ -1,0 +1,4 @@
+services:
+  scheduler:
+    volumes:
+      - /absolute/path/to/your/gcp-keys-dir:/usr/local/airflow/gcp-keys:ro
