@@ -42,4 +42,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt pytest
       - name: Run pytest
-        run: pytest tests/test_holidays.py tests/test_churn_features.py -v
+        run: python -m pytest tests/test_holidays.py tests/test_churn_features.py -v
