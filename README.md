@@ -79,6 +79,12 @@ All orchestrated daily by one Airflow DAG:
 - **dbt credentials reach the Airflow container via a volume mount**, not by embedding key JSON into Airflow Variables — keeps the actual secret bytes out of Airflow's metadata DB and out of anything this assistant would need to read/handle directly.
 - **No `unique` test on `users.email`.** 10,653 duplicate emails exist in the synthetic TheLook data — expected, not a bug. Adding the test would fail every build for no actionable reason.
 
+## Screenshots
+
+| Airflow graph | dbt lineage | Dashboard |
+| --- | --- | --- |
+| ![Airflow graph view](docs/screenshots/airflow-graph.png) | ![dbt lineage graph](docs/screenshots/dbt-lineage.png) | ![Looker Studio dashboard](docs/screenshots/dashboard.png) |
+
 ## Data quality
 
 66 dbt tests across 12 models (staging + marts): primary-key uniqueness, referential integrity (`relationships`) between every fact and its dimension, `accepted_values` on every closed enum (order/item status, gender, event_type), numeric range checks (no negative prices, ages 0–110, revenue ≥ 0), row-count parity between staging and marts (nothing silently dropped in a join), and grain-uniqueness checks on the daily sales table. Boundary cases (negative prices, orphaned foreign keys, inverted timestamps, out-of-range values) were manually probed against the live data before writing the corresponding tests, not just checkbox-added. `dbt build` passes 78/78.
