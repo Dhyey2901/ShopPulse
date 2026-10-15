@@ -18,6 +18,7 @@ End-to-end e-commerce data pipeline: Airflow ingests raw data, dbt models it in 
 - **Churn model: precision 0.945, recall 0.347, ROC-AUC 0.685** — honest numbers after removing a feature that was definitionally leaking the label (see Design decisions)
 - **Running on a live daily schedule**, not just manually triggered — 0 failed tasks across 8+ consecutive DAG runs
 - **Dashboard**: revenue trend, holiday vs. non-holiday sales, churn risk by segment, web-event funnel — all reading from the tested marts, not raw tables
+- **[Postgres indexing exercise →](analysis/postgres-performance/)** — 29ms → 0.3ms (~91x) on a customer order-history lookup after adding two indexes, with real `EXPLAIN ANALYZE` output before/after
 
 ## Architecture
 
