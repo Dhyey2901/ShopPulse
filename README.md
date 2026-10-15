@@ -21,26 +21,20 @@ End-to-end e-commerce data pipeline: Airflow ingests raw data, dbt models it in 
 
 ## Architecture
 
-```text
-Nager.Date API ──┐
-                  ├─► raw.holidays (BigQuery) ─┐
-TheLook public ───┘                            │
-dataset (BigQuery, queried directly)           │
-        │                                      │
-        ▼                                      │
-   dbt staging models (rename/cast only)       │
-        │                                      │
-        ▼                                      │
-   dbt mart models ◄────────────────────────────┘
-   (fct_orders, dim_customers, fct_daily_sales,
-    ml_churn_features)
-        │
-        ├─► ml/train.py (scikit-learn) ─► ml.churn_scores
-        │
-        └─► Looker Studio dashboard
+```mermaid
+flowchart LR
+    API[Nager.Date API] --> RAW[("raw.holidays<br/>BigQuery")]
+    TL[("TheLook public dataset<br/>BigQuery")] --> STG["dbt staging<br/>rename/cast only"]
+    RAW --> MART
+    STG --> MART["dbt marts<br/>fct_orders, dim_customers,<br/>fct_daily_sales, ml_churn_features"]
+    MART --> ML["ml/train.py<br/>scikit-learn"]
+    ML --> SCORES[("ml.churn_scores<br/>BigQuery")]
+    MART --> DASH["Looker Studio<br/>dashboard"]
+    SCORES --> DASH
 
-All orchestrated daily by one Airflow DAG:
-  ingest_holidays -> dbt_build -> train_churn_model
+    subgraph DAG["Airflow DAG · daily"]
+        T1[ingest_holidays] --> T2[dbt_build] --> T3[train_churn_model]
+    end
 ```
 
 ## Stack

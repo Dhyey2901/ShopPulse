@@ -1,4 +1,4 @@
-"""Example Dags test. This test ensures that all Dags have tags, retries set to two, and no import errors. This is an example pytest and may not be fit the context of your Dags. Feel free to add and remove tests."""
+"""Checks that every DAG has tags, retries >= 2, and imports without error."""
 
 import logging
 import os
